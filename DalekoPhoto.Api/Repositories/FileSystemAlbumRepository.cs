@@ -13,19 +13,19 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
         return ReadAsync(CancellationToken.None);
     }
 
-    public ValueTask<IReadOnlyList<Album>> ReadAsync(CancellationToken cancellationToken)
+    public async ValueTask<IReadOnlyList<Album>> ReadAsync(CancellationToken cancellationToken)
     {
-        return ValueTask.FromResult(null as IReadOnlyList<Album>);
+        return new List<Album>();
     }
 
-    public ValueTask<IReadOnlyList<Album>> ReadAsync(Expression<Func<Album, bool>> expression)
+    public async ValueTask<IReadOnlyList<Album>> ReadAsync(Expression<Func<Album, bool>> expression)
     {
-        return ValueTask.FromResult(null as IReadOnlyList<Album>);
+        return new List<Album>();
     }
 
-    public ValueTask<IReadOnlyList<Album>> ReadAsync(Expression<Func<Album, bool>> expression, CancellationToken cancellationToken)
+    public async ValueTask<IReadOnlyList<Album>> ReadAsync(Expression<Func<Album, bool>> expression, CancellationToken cancellationToken)
     {
-        return ValueTask.FromResult(null as IReadOnlyList<Album>);
+        return new List<Album>();
     }
 
     public ValueTask<Album> ReadPortfolioAsync()
@@ -33,8 +33,8 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
         return ReadPortfolioAsync(CancellationToken.None);
     }
 
-    public ValueTask<Album> ReadPortfolioAsync(CancellationToken cancellationToken)
+    public async ValueTask<Album> ReadPortfolioAsync(CancellationToken cancellationToken)
     {
-        return ValueTask.FromResult(null as Album);
+        return new Album();
     }
 }
