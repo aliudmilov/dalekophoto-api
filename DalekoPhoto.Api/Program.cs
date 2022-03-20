@@ -20,10 +20,24 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(
-        builder.Environment.ContentRootPath, 
+        builder.Environment.ContentRootPath,
         Environment.GetEnvironmentVariable(Constants.EnvKeyPhotoRootPath))),
     RequestPath = Constants.PhotoRequestPath,
     OnPrepareResponse = ctx =>
@@ -34,17 +48,7 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseCors();
-app.UseHsts();
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
