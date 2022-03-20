@@ -88,4 +88,37 @@ public class AlbumsController : ControllerBase
 
         return Ok(album);
     }
+
+    /// <summary>
+    /// Gets the portfolio photo album
+    /// </summary>
+    /// <response code="200">Returns the portfolio photo album</response>
+    [HttpGet("/portoflio")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetPortfolio()
+    {
+        _logger.LogInformation($"Received get portfolio album request...");
+
+        Stopwatch sw = Stopwatch.StartNew();
+        Album album = null;
+        try
+        {
+            album = await _albumRepository.ReadPortfolioAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation($"Get portoflio album was cancelled");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"An error occured while fetching portoflio album");
+            throw;
+        }
+
+        sw.Stop();
+
+        _logger.LogInformation($"Portfolio album fetched for {sw.ElapsedMilliseconds}ms");
+
+        return Ok(album);
+    }
 }

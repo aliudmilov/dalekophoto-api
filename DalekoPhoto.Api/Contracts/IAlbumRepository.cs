@@ -2,6 +2,6 @@
 
 namespace DalekoPhoto.Api;
 
-public interface IAlbumRepository : IReadModelRepository<Album>
+public interface IAlbumRepository : IReadModelRepository<Album>, IPortfolioRepository
 {
 }
