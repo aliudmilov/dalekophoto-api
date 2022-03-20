@@ -1,7 +1,10 @@
-﻿namespace DalekoPhoto.Api;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DalekoPhoto.Api;
 
 public class Album
 {
+    [Required]
     public string Id { get; set; }
 
     public string Icon { get; set; }

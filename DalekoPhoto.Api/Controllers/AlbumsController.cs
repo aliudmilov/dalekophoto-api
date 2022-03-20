@@ -22,7 +22,7 @@ public class AlbumsController : ControllerBase
     /// </summary>
     /// <response code="200">Returns all the photo albums</response>
     [HttpGet(Name = "GetAlbums")]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(Album[]), 200)]
     public async Task<IActionResult> Get()
     {
         _logger.LogInformation("Received get all albums request. Fetching all albums...");
@@ -56,8 +56,8 @@ public class AlbumsController : ControllerBase
     /// </summary>
     /// <response code="200">Returns the photo album that has the specified ID</response>
     /// <response code="400">The request does not contain a valid photo album ID</response>
-    [HttpGet("{id}")]
-    [ProducesResponseType(200)]
+    [HttpGet(template: "{id}", Name = "GetAlbum")]
+    [ProducesResponseType(typeof(Album), 200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Get(string id)
     {
@@ -93,8 +93,8 @@ public class AlbumsController : ControllerBase
     /// Gets the portfolio photo album
     /// </summary>
     /// <response code="200">Returns the portfolio photo album</response>
-    [HttpGet("/portoflio")]
-    [ProducesResponseType(200)]
+    [HttpGet(template: "portfolio", Name = "GetPortfolio")]
+    [ProducesResponseType(typeof(Album), 200)]
     public async Task<IActionResult> GetPortfolio()
     {
         _logger.LogInformation($"Received get portfolio album request...");

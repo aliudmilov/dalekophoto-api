@@ -1,12 +1,16 @@
-﻿namespace DalekoPhoto.Api;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DalekoPhoto.Api;
 
 public class Photo
 {
+    [Required]
     public string Id { get; set; }
 
-    public string LargeImageUrl { get; set; }
-
+    [Required]
     public string SmallImageUrl { get; set; }
+
+    public string LargeImageUrl { get; set; }
 
     public string Title { get; set; }
 

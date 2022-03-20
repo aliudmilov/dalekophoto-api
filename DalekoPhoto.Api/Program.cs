@@ -35,7 +35,7 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(
         builder.Environment.ContentRootPath,
-        Environment.GetEnvironmentVariable(Constants.EnvKeyPhotoRootPath))),
+        Environment.GetEnvironmentVariable(Constants.EnvKeyPhotoRootPath) ?? string.Empty)),
     RequestPath = Constants.PhotoRequestPath,
     OnPrepareResponse = ctx =>
     {
