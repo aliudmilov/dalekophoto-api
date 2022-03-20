@@ -6,12 +6,12 @@ using System.Diagnostics;
 [ApiController]
 [Route("api/v1/albums")]
 [Produces("application/json")]
-public class AlbumController : ControllerBase
+public class AlbumsController : ControllerBase
 {
-    private readonly ILogger<AlbumController> _logger;
+    private readonly ILogger<AlbumsController> _logger;
     private readonly IAlbumRepository _albumRepository;
 
-    public AlbumController(ILogger<AlbumController> logger, IAlbumRepository albumRepository)
+    public AlbumsController(ILogger<AlbumsController> logger, IAlbumRepository albumRepository)
     {
         _logger = logger;
         _albumRepository = albumRepository;
@@ -20,7 +20,7 @@ public class AlbumController : ControllerBase
     /// <summary>
     /// Gets all the photo albums
     /// </summary>
-    /// <response code="200">Returns all the albums</response>
+    /// <response code="200">Returns all the photo albums</response>
     [HttpGet(Name = "GetAlbums")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> Get()
@@ -33,9 +33,14 @@ public class AlbumController : ControllerBase
         {
             albums = await _albumRepository.ReadAsync();
         }
+        catch (OperationCanceledException)
+        {
+            albums = Array.Empty<Album>();
+            _logger.LogInformation("The get all albums operation was cancelled");
+        }
         catch (Exception ex)
         {
-            _logger.LogError(new EventId(), ex, "An error occured while fetching all albums");
+            _logger.LogError(ex, "An error occured while fetching all albums");
             throw;
         }
 
@@ -44,5 +49,43 @@ public class AlbumController : ControllerBase
         _logger.LogInformation($"All albums fetched for {sw.ElapsedMilliseconds}ms");
 
         return Ok(albums);
+    }
+
+    /// <summary>
+    /// Gets the photo album that has the specified ID
+    /// </summary>
+    /// <response code="200">Returns the photo album that has the specified ID</response>
+    /// <response code="400">The request does not contain a valid photo album ID</response>
+    [HttpGet("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Get(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return BadRequest();
+
+        _logger.LogInformation($"Received get album with ID = {id} request...");
+
+        Stopwatch sw = Stopwatch.StartNew();
+        Album album = null;
+        try
+        {
+            album = (await _albumRepository.ReadAsync(x => x.Id == id.Trim().ToLowerInvariant()))?.SingleOrDefault();
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation($"Get album with ID = {id} operation was cancelled");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"An error occured while fetching album with ID = {id}");
+            throw;
+        }
+
+        sw.Stop();
+
+        _logger.LogInformation($"Album with ID = {id} fetched for {sw.ElapsedMilliseconds}ms");
+
+        return Ok(album);
     }
 }

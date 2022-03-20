@@ -14,9 +14,33 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PHOTO_FOLDER_PATH": "d:\\dalekophoto-prod"
+      },
+      "sqlDebugging": true,
+      "applicationUrl": "https://localhost:7777",
+      "dotnetRunMessages": true
+    },
+    "DalekoPhoto UAT": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "UAT",
+        "ASPNETCORE_DETAILEDERRORS": "1",
+        "PHOTO_FOLDER_PATH": "..\\dalekophoto-prod"
       },
       "applicationUrl": "https://localhost:7777",
+      "dotnetRunMessages": true
+    },
+    "DalekoPhoto Production": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "PHOTO_FOLDER_PATH": "..\\dalekophoto-prod"
+      },
       "dotnetRunMessages": true
     },
     "IIS Express": {

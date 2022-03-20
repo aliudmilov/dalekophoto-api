@@ -12,9 +12,9 @@ public class Album
 
     public string Location { get; set; }
 
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime? DateCreated { get; set; }
 
-    public DateTime UpdatedDate { get; set; }
+    public DateTime? DateUpdated { get; set; }
 
     public Photo[] Photos { get; set; }
 }
