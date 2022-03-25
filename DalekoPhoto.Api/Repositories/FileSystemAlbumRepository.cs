@@ -59,8 +59,11 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
 
     public async ValueTask<Album> ReadPortfolioAsync(CancellationToken cancellationToken)
     {
-        return (await ReadAsync(x => 
+        var porfolio = (await ReadAsync(x => 
             string.Equals(x.Title, PortfolioAlbumName, StringComparison.OrdinalIgnoreCase), cancellationToken))?.SingleOrDefault();
+        porfolio.IsPorfolio = true;
+
+        return porfolio;
     }
 
     private Task<List<Album>> LoadAlbumsAsync(CancellationToken cancellationToken)

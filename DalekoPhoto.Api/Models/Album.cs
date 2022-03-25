@@ -20,4 +20,6 @@ public class Album
     public DateTime? DateUpdated { get; set; }
 
     public Photo[] Photos { get; set; }
+
+    public bool IsPorfolio { get; set; }
 }
