@@ -36,7 +36,7 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
 
     public async ValueTask<IReadOnlyList<Album>> ReadAsync(Expression<Func<Album, bool>> expression, CancellationToken cancellationToken)
     {
-        List<Album> albums = await _memoryCache.GetOrCreateAsync(
+        var albums = await _memoryCache.GetOrCreateAsync(
             nameof(Album),
             cacheEntry =>
             {
@@ -66,7 +66,7 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
         return porfolio;
     }
 
-    private Task<List<Album>> LoadAlbumsAsync(CancellationToken cancellationToken)
+    private Task<Album[]> LoadAlbumsAsync(CancellationToken cancellationToken)
     {
         string imagesRootPath = Environment.GetEnvironmentVariable(Constants.EnvKeyPhotoRootPath);
         if (!Directory.Exists(imagesRootPath))
@@ -114,16 +114,22 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
                 photos.Add(photo);
             }
 
+            string location = GetLocation(directoryName);
             albums.Add(new Album
             {
                 Id = GetAlbumId(directoryName),
-                Title = directoryName,
-                Location = GetLocation(directoryName),
+                Title = location ?? directoryName,
+                Location = location,
                 Photos = photos.ToArray(),
             });
         }
 
-        return Task.FromResult(albums);
+        var albumsOrdered = albums
+            .Where(x => string.IsNullOrEmpty(x.Location))
+            .Union(albums.Where(x => !string.IsNullOrEmpty(x.Location)))
+            .ToArray();
+
+        return Task.FromResult(albumsOrdered);
     }
 
     private string GetAlbumId(string directoryName)
