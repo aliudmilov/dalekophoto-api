@@ -7,7 +7,8 @@ using System.Linq.Expressions;
 public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
 {
     private static readonly string PortfolioAlbumName = "Portfolio";
-    private static readonly string SmallPhotosDirectoryName = "size-1920";
+    private static readonly string SmallPhotosDirectoryName = "size-640";
+    private static readonly string MediumPhotosDirectoryName = "size-1280";
     private static readonly string LargePhotosDirectoryName = "size-2560";
     private static readonly char[] DirectoryNameLocationIdentifier = new char[] { '-' };
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -87,7 +88,13 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
             if (!Directory.Exists(smallImageDirectoryPath))
                 continue;
 
+            string mediumImageDirectoryPath = Path.Combine(directoryPath, MediumPhotosDirectoryName);
+            if (!Directory.Exists(mediumImageDirectoryPath))
+                continue;
+
             string largeImageDirectoryPath = Path.Combine(directoryPath, LargePhotosDirectoryName);
+            if (!Directory.Exists(largeImageDirectoryPath))
+                continue;
 
             var photos = new List<Photo>();
             foreach (var smallFilePath in Directory.GetFiles(smallImageDirectoryPath))
@@ -95,19 +102,17 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
                 cancellationToken.ThrowIfCancellationRequested();
 
                 string fileName = Path.GetFileName(smallFilePath);
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(smallFilePath);
+
+                string mediumFilePath = Path.Combine(mediumImageDirectoryPath, fileName);
+                string largeFilePath = Path.Combine(largeImageDirectoryPath, fileName);
 
                 Photo photo = new Photo
                 {
-                    Id = GetPhotoId(directoryName, fileNameWithoutExtension),
+                    Id = fileName,
                     SmallImageUrl = GetImageUrl(imagesRootPath, smallFilePath),
+                    MediumImageUrl = GetImageUrl(imagesRootPath, mediumFilePath),
+                    LargeImageUrl = GetImageUrl(imagesRootPath, mediumFilePath)
                 };
-
-                string largeFilePath = Path.Combine(largeImageDirectoryPath, fileName);
-                if (File.Exists(largeFilePath))
-                {
-                    photo.LargeImageUrl = GetImageUrl(imagesRootPath, largeFilePath);
-                }
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -147,11 +152,6 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
             return parts[0];
 
         return $"{parts[1]}, {parts[0]}";
-    }
-
-    private string GetPhotoId(string directoryName, string fileNameWithoutExtension)
-    {
-        return $"{directoryName.ToLowerInvariant()}/{fileNameWithoutExtension.ToLowerInvariant()}";
     }
 
     private string GetImageUrl(string imagesRootPath, string imagePath)

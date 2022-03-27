@@ -10,6 +10,10 @@ public class Photo
     [Required]
     public string SmallImageUrl { get; set; }
 
+    [Required]
+    public string MediumImageUrl { get; set; }
+
+    [Required]
     public string LargeImageUrl { get; set; }
 
     public string Title { get; set; }
