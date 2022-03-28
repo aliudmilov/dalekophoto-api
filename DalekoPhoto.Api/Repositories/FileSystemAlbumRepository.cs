@@ -10,6 +10,9 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
     private static readonly string SmallPhotosDirectoryName = "size-640";
     private static readonly string MediumPhotosDirectoryName = "size-1280";
     private static readonly string LargePhotosDirectoryName = "size-2560";
+    private static readonly string SmallPhotoDefaultFileName = "template-640.png";
+    private static readonly string MediumPhotoDefaultFileName = "template-1280.png";
+    private static readonly string LargePhotoDefaultFileName = "template-2560.png";
     private static readonly char[] DirectoryNameLocationIdentifier = new char[] { '-' };
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMemoryCache _memoryCache;
@@ -61,7 +64,7 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
     public async ValueTask<Album> ReadPortfolioAsync(CancellationToken cancellationToken)
     {
         var porfolio = (await ReadAsync(x => 
-            string.Equals(x.Title, PortfolioAlbumName, StringComparison.OrdinalIgnoreCase), cancellationToken))?.SingleOrDefault();
+            string.Equals(x.Title, PortfolioAlbumName, StringComparison.OrdinalIgnoreCase), cancellationToken))?.Single();
         porfolio.IsPorfolio = true;
 
         return porfolio;
@@ -74,7 +77,11 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
         {
             throw new InvalidOperationException("Can't find the photo repositrory source");
         }
-        
+
+        string smallImageDefaultUrl = Path.Combine(imagesRootPath, SmallPhotoDefaultFileName);
+        string mediumImageDefaultUrl = Path.Combine(imagesRootPath, MediumPhotoDefaultFileName);
+        string largeImageDefaultUrl = Path.Combine(imagesRootPath, LargePhotoDefaultFileName);
+
         cancellationToken.ThrowIfCancellationRequested();
 
         var albums = new List<Album>();
@@ -105,13 +112,18 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
 
                 string mediumFilePath = Path.Combine(mediumImageDirectoryPath, fileName);
                 string largeFilePath = Path.Combine(largeImageDirectoryPath, fileName);
+                if (!File.Exists(mediumFilePath) || !File.Exists(largeFilePath))
+                    continue;
 
-                Photo photo = new Photo
+                var photo = new Photo
                 {
                     Id = fileName,
                     SmallImageUrl = GetImageUrl(imagesRootPath, smallFilePath),
+                    SmallImageDefaultUrl = GetImageUrl(imagesRootPath, smallImageDefaultUrl),
                     MediumImageUrl = GetImageUrl(imagesRootPath, mediumFilePath),
-                    LargeImageUrl = GetImageUrl(imagesRootPath, mediumFilePath)
+                    MediumImageDefaultUrl = GetImageUrl(imagesRootPath, mediumImageDefaultUrl),
+                    LargeImageUrl = GetImageUrl(imagesRootPath, largeFilePath),
+                    LargeImageDefaultUrl = GetImageUrl(imagesRootPath, largeImageDefaultUrl),
                 };
 
                 cancellationToken.ThrowIfCancellationRequested();

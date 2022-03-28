@@ -11,10 +11,19 @@ public class Photo
     public string SmallImageUrl { get; set; }
 
     [Required]
+    public string SmallImageDefaultUrl { get; set; }
+
+    [Required]
     public string MediumImageUrl { get; set; }
 
     [Required]
+    public string MediumImageDefaultUrl { get; set; }
+
+    [Required]
     public string LargeImageUrl { get; set; }
+
+    [Required]
+    public string LargeImageDefaultUrl { get; set; }
 
     public string Title { get; set; }
 
