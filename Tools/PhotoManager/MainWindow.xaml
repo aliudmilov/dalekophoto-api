@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:PhotoManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <StackPanel>
         <Button Click="Button_Click">Copy from UAT to Prod</Button>
-    </Grid>
+        <Button Click="Button_Click_1">Rename featured photos</Button>
+    </StackPanel>
 </Window>

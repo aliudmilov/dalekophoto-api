@@ -13,6 +13,7 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
     private static readonly string SmallPhotoDefaultFileName = "template-640.png";
     private static readonly string MediumPhotoDefaultFileName = "template-1280.png";
     private static readonly string LargePhotoDefaultFileName = "template-2560.png";
+    private static readonly string IsFeaturedPhotoSearchPattern = "_FEATURED";
     private static readonly char[] DirectoryNameLocationIdentifier = new char[] { '-' };
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMemoryCache _memoryCache;
@@ -124,6 +125,7 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
                     MediumImageDefaultUrl = GetImageUrl(imagesRootPath, mediumImageDefaultUrl),
                     LargeImageUrl = GetImageUrl(imagesRootPath, largeFilePath),
                     LargeImageDefaultUrl = GetImageUrl(imagesRootPath, largeImageDefaultUrl),
+                    IsFeatured = fileName.Contains(IsFeaturedPhotoSearchPattern)
                 };
 
                 cancellationToken.ThrowIfCancellationRequested();

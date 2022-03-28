@@ -25,6 +25,9 @@ public class Photo
     [Required]
     public string LargeImageDefaultUrl { get; set; }
 
+    [Required]
+    public bool IsFeatured { get; set; }
+
     public string Title { get; set; }
 
     public string Description { get; set; }
