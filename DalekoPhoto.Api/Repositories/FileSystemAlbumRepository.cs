@@ -144,8 +144,9 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
         }
 
         var albumsOrdered = albums
-            .Where(x => string.IsNullOrEmpty(x.Location))
-            .Union(albums.Where(x => !string.IsNullOrEmpty(x.Location)))
+            .OrderBy(x => x.Title)
+            .Where(x => !string.IsNullOrEmpty(x.Location))
+            .Union(albums.Where(x => string.IsNullOrEmpty(x.Location)))
             .ToArray();
 
         return Task.FromResult(albumsOrdered);

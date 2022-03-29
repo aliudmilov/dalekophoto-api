@@ -20,6 +20,21 @@ namespace PhotoManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string FeaturedIdentifier = "_FEATURED";
+        private const string UatFolder = "dalekophoto";
+        private const string UatRootPath = @$"D:\{UatFolder}";
+        private const string ProdRootFolder = "dalekophoto-prod";
+        private const string ProdRootPath = @$"D:\{ProdRootFolder}";
+        private const string Size2560Folder = "size-2560";
+        private const string Size1280Folder = "size-1280";
+        private const string Size640Folder = "size-640";
+        private static readonly string[] AllSizeFolders = new string[]
+        {
+            Size2560Folder,
+            Size1280Folder,
+            Size640Folder,
+        };
+
         public MainWindow()
         {
             InitializeComponent();
@@ -27,39 +42,53 @@ namespace PhotoManager
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string[] albumFolders = Directory.GetDirectories(@"D:\dalekophoto");
+            string[] albumFolders = Directory.GetDirectories(UatRootPath);
             foreach (string folder in albumFolders)
             {
                 string[] sizeFolders = Directory.GetDirectories(folder);
                 foreach (string sizeFolder in sizeFolders)
                 {
-                    Directory.CreateDirectory(folder.Replace("dalekophoto", "dalekophoto-prod"));
-                    Directory.Move(sizeFolder, sizeFolder.Replace("dalekophoto", "dalekophoto-prod"));
+                    Directory.CreateDirectory(folder.Replace(UatFolder, ProdRootFolder));
+                    Directory.Move(sizeFolder, sizeFolder.Replace(UatFolder, ProdRootFolder));
                 }
             }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            string[] albumFolders = Directory.GetDirectories(@"D:\dalekophoto");
-            foreach (string folder in albumFolders)
+            string[] prodAlbumPaths = Directory.GetDirectories(ProdRootPath);
+            foreach (string prodAlbumPath in prodAlbumPaths)
             {
-                foreach (string file in Directory.GetFiles(folder))
+                foreach (string sizeFolder in AllSizeFolders)
                 {
-                    if (file.Contains("FEATURED"))
+                    string prodSizeAlbumPath = Path.Combine(prodAlbumPath, sizeFolder);
+                    foreach (string prodFile in Directory.GetFiles(prodSizeAlbumPath))
                     {
-                        string rootFolder = folder.Replace("dalekophoto", "dalekophoto-prod");
-                        string fileName = Path.GetFileName(file);
-                        string lookupFilename = fileName.Replace("_FEATURED", string.Empty);
+                        if (prodFile.Contains(FeaturedIdentifier))
+                        {
+                            string noFeaturePath = prodFile.Replace(FeaturedIdentifier,string.Empty);
+                            File.Move(prodFile, noFeaturePath);
+                        }
+                    }
+                }
+            }
 
-                        string largeFile = Path.Combine(rootFolder, "size-2560", lookupFilename);
-                        File.Move(largeFile, Path.Combine(rootFolder, "size-2560", fileName));
+            string[] uatAlbumPaths = Directory.GetDirectories(UatRootPath);
+            foreach (string uatAlbumPath in uatAlbumPaths)
+            {
+                foreach (string uatFile in Directory.GetFiles(uatAlbumPath))
+                {
+                    if (uatFile.Contains(FeaturedIdentifier))
+                    {
+                        string rootFolder = uatAlbumPath.Replace(UatFolder, ProdRootFolder);
+                        string fileName = Path.GetFileName(uatFile);
+                        string lookupFilename = fileName.Replace(FeaturedIdentifier, string.Empty);
 
-                        string medFile = Path.Combine(rootFolder, "size-1280", lookupFilename);
-                        File.Move(medFile, Path.Combine(rootFolder, "size-1280", fileName));
-
-                        string smallFile = Path.Combine(rootFolder, "size-640", lookupFilename);
-                        File.Move(smallFile, Path.Combine(rootFolder, "size-640", fileName));
+                        foreach (string sizeFolder in AllSizeFolders)
+                        {
+                            string largeFile = Path.Combine(rootFolder, sizeFolder, lookupFilename);
+                            File.Move(largeFile, Path.Combine(rootFolder, sizeFolder, fileName));
+                        }
                     }
                 }
             }
