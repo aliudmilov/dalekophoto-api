@@ -136,7 +136,7 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
             string location = GetLocation(directoryName);
             albums.Add(new Album
             {
-                Id = GetAlbumId(directoryName),
+                Id = (location ?? directoryName).ToLowerInvariant(),
                 Title = location ?? directoryName,
                 Location = location,
                 Photos = photos.ToArray(),
@@ -150,11 +150,6 @@ public class FileSystemAlbumRepository : IAlbumRepository, IPortfolioRepository
             .ToArray();
 
         return Task.FromResult(albumsOrdered);
-    }
-
-    private string GetAlbumId(string directoryName)
-    {
-        return directoryName.ToLowerInvariant();
     }
 
     private string GetLocation(string directoryName)
